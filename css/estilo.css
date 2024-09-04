@@ -1,0 +1,36 @@
+/* Cores da paleta */
+:root {
+    --deep-sea: #69d1a2;
+    --dark-teal: #003533;
+    --medium-teal: #00746D;
+    --yellow: #FFB300;
+    --light-blue: #B6CCD1;
+    --white: #ffffff;
+}
+
+/* Estilos gerais */
+body {
+    font-family: sans-serif; 
+    background-color: var(--white);
+}
+
+.container-fluid {
+    padding: 20px;
+}
+
+
+.table th {
+    background-color: var(--medium-teal);
+    color: var(--white);
+}
+
+.badge-danger {
+    background-color: var(--yellow);
+    color: var(--dark-teal);
+}
+
+/* Estilos específicos (para os gráficos) */
+#cases-per-person-chart {
+    /* Estilos para o gráfico de pizza */
+}
+

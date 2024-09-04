@@ -1,0 +1,18 @@
+<gadget>
+  <prompt-parameters>
+    <parameter id="CODEMP_LIST" description="Lista de cod Empresas" metadata="multiList:Text" listType="sql" required="false" keep-last="false" keep-date="false">
+      <expression type="SQL"><![CDATA[SELECT CODEMP AS VALUE, CODEMP||' - '||RAZAOABREV AS LABEL FROM TSIEMP WHERE PERMITE_EMPRESA(CODEMP) = 'S' AND CODEMPMATRIZ IS NOT NULL]]></expression>
+    </parameter>
+  </prompt-parameters>
+  <level id="lvl_ulnyo4" description="Primeiro">
+    <args>
+      <arg id="CODEMP" type="integer"/>
+    </args>
+    <container orientacao="V" tamanhoRelativo="100">
+      <container orientacao="V" tamanhoRelativo="50">
+        <html5component id="html5_ulnyo5" entryPoint="model_Leads.jsp"/>
+      </container>
+    </container>
+  </level>
+  
+</gadget>
