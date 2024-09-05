@@ -1,17 +1,22 @@
 <gadget>
   <prompt-parameters>
-    <parameter id="CODEMP_LIST" description="Lista de cod Empresas" metadata="multiList:Text" listType="sql" required="false" keep-last="false" keep-date="false">
-      <expression type="SQL"><![CDATA[SELECT CODEMP AS VALUE, CODEMP||' - '||RAZAOABREV AS LABEL FROM TSIEMP WHERE PERMITE_EMPRESA(CODEMP) = 'S' AND CODEMPMATRIZ IS NOT NULL]]></expression>
-    </parameter>
+    <parameter id="PERIODO" description="Periodo" metadata="datePeriod" required="true" keep-last="true" keep-date="false" order="0"/>
   </prompt-parameters>
-  <level id="lvl_ulnyo4" description="Primeiro">
+
+  <level id="lvl_aocqxwn" description="Principal">
+    <container orientacao="V" tamanhoRelativo="100">
+      <html5component id="html5_aocqxwo" entryPoint="leadshtml5/model_Leads.jsp"/>
+    </container>
+  </level>
+  
+  <level id="lvl_arj8z74" description="Leads Atrasados">
     <args>
-      <arg id="CODEMP" type="integer"/>
+      <arg id="DEPARTAMENTO" type="text"/>
     </args>
     <container orientacao="V" tamanhoRelativo="100">
-      <container orientacao="V" tamanhoRelativo="50">
-        <html5component id="html5_ulnyo5" entryPoint="model_Leads.jsp"/>
-      </container>
+      <simple-value id="svl_arj8z77">
+        <value-expression><![CDATA[nOVO nIVEL AQUI]]></value-expression>
+      </simple-value>
     </container>
   </level>
   
