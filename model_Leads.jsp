@@ -143,7 +143,8 @@
     
     COUNT(*) AS Total_Leads,
     COUNT(CASE WHEN STATUS = 'AB' THEN 1 END) AS Total_Abertos,
-    COUNT(CASE WHEN STATUS = 'FE' THEN 1 END) AS Total_Fechados
+    COUNT(CASE WHEN STATUS = 'FE' THEN 1 END) AS Total_Fechados,
+    NVL(SUM(CASE WHEN STATUS = 'AB' AND SYSDATE > DTCRIACAO + TEMPORET THEN 1 ELSE 0 END), 0) AS Total_Abertos_Atrasados
 FROM 
     AD_CRMGESINT
 WHERE 
@@ -164,6 +165,29 @@ GROUP BY
 ORDER BY 
     Departamento
     </snk:query>
+
+    <snk:query var="leadSPorEmpresa">
+        SELECT
+        E.CODEMP,
+        E.NOMEFANTASIA,
+        COUNT(*) AS Total_Leads,
+        COUNT(CASE WHEN A.STATUS = 'AB' THEN 1 END) AS Total_Abertos,
+        COUNT(CASE WHEN A.STATUS = 'FE' THEN 1 END) AS Total_Fechados,
+        NVL(SUM(CASE WHEN A.STATUS = 'AB' AND SYSDATE > A.DTCRIACAO + A.TEMPORET THEN 1 ELSE 0 END), 0) AS Total_Abertos_Atrasados
+    FROM 
+        AD_CRMGESINT A
+        INNER JOIN TSIEMP E ON A.CODEMP = E.CODEMP -- Junção com a tabela de empresas
+    WHERE 
+        A.ORIGEM = 'SI' 
+        AND A.TIPINT = 'SO'
+        AND TRUNC(A.DTCRIACAO) BETWEEN TRUNC(:PERIODO.INI) AND TRUNC(:PERIODO.FIN) -- Filtro por período
+    GROUP BY
+        E.CODEMP,
+        E.NOMEFANTASIA
+    ORDER BY 
+        E.CODEMP
+    </snk:query>
+
 
     <snk:query var="totalLeadsPorPeriodo">
         SELECT 
@@ -267,6 +291,7 @@ ORDER BY
                                     <th>Total</th>
                                     <th>Abertos</th>
                                     <th>Fechados</th>
+                                    <th>Abertos e Atrasados</th>
                                     <th>Detalhes</th>
                                 </tr>
                             </thead>
@@ -277,6 +302,7 @@ ORDER BY
                                         <td><c:out value="${row.Total_Leads}" /></td>
                                         <td><c:out value="${row.Total_Abertos}" /></td>
                                         <td><c:out value="${row.Total_Fechados}" /></td>
+                                        <td><c:out value="${row.Total_Abertos_Atrasados}" /></td>
                                         <td>
                                             <!-- Ícone que chama a função carregarLeadDepartamento com o departamento -->
                                             <a href="javascript:void(0);" onclick="carregarLeadDepartamento('${row.DEPTO}');" class="btn btn-link">
@@ -294,9 +320,37 @@ ORDER BY
             
             <div class="col-md-6">
                 <div class="card">
-                    <div class="card-header">Leads por dia</div>
+                    <div class="card-header">Leads por Empresa</div>
                     <div class="card-body">
-                        <div id="chart_div"></div> 
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Empresa</th>
+                                    <th>Total</th>
+                                    <th>Abertos</th>
+                                    <th>Fechados</th>
+                                    <th>Abertos e Atrasados</th>
+                                    <th>Detalhes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach items="${leadSPorEmpresa.rows}" var="row"> 
+                                    <tr>
+                                        <td><c:out value="${row.NOMEFANTASIA}" /></td>
+                                        <td><c:out value="${row.Total_Leads}" /></td>
+                                        <td><c:out value="${row.Total_Abertos}" /></td>
+                                        <td><c:out value="${row.Total_Fechados}" /></td>
+                                        <td><c:out value="${row.Total_Abertos_Atrasados}" /></td>
+                                        <td>
+                                            <!-- Ícone que chama a função carregarLeadDepartamento com o departamento -->
+                                            <a href="javascript:void(0);" onclick="carregarLeadEmpresa('${row.CODEMP}');" class="btn btn-link">
+                                                <i class="fas fa-arrow-circle-right"></i> <!-- Ícone elegante -->
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -307,9 +361,9 @@ ORDER BY
         <div class="row mt-4">
             <div class="col-md-4">
                 <div class="card">
-                    <div class="card-header">Cases Per Person</div>
+                    <div class="card-header">Leads por dia</div>
                     <div class="card-body">
-                        <div id="cases-per-person-chart"></div>
+                        <div id="chart_div"></div> 
                     </div>
                 </div>
             </div>
