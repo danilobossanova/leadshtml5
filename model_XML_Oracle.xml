@@ -1,23 +1,6 @@
 <gadget>
-  <prompt-parameters>
-    <parameter id="PERIODO" description="Periodo" metadata="datePeriod" required="true" keep-last="true" keep-date="false" order="0"/>
-  </prompt-parameters>
-
-  <level id="lvl_aocqxwn" description="Principal">
-    <container orientacao="V" tamanhoRelativo="100">
-      <html5component id="html5_aocqxwo" entryPoint="leadshtml5/model_Leads.jsp"/>
-    </container>
-  </level>
-  
-  <level id="lvl_arj8z74" description="Leads Atrasados">
-    <args>
-      <arg id="DEPARTAMENTO" type="text"/>
-    </args>
-    <container orientacao="V" tamanhoRelativo="100">
-      <simple-value id="svl_arj8z77">
-        <value-expression><![CDATA[nOVO nIVEL AQUI]]></value-expression>
-      </simple-value>
-    </container>
-  </level>
-  
+  <level id="lvl_aykicqv" description="Principal"/>
+  <level id="lvl_aykicqw" description="TodosLeads"/>
+  <level id="lvl_aykicqx" description="Abertos"/>
+  <level id="lvl_aykicqy" description="Gerentes"/>
 </gadget>

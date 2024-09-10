@@ -16,6 +16,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="${BASE_FOLDER}/js/gerenteLeadsGauge.js"></script>
 
     <snk:query var="leadsPorDia">
         SELECT 
@@ -34,6 +35,16 @@
 
     </snk:query>
 
+
+    <snk:query var="leadsPorGerente">
+        SELECT  
+            RK.RANKING,
+            RK.GERENTE,
+            RK.EFICIENCIA
+
+            FROM VW_RANKEFIC_DCCO RK
+            ORDER BY RK.RANKING
+    </snk:query>
 
    <!-- gRAFICO hIGHCHARTS -->
     <script type="text/javascript">
@@ -107,17 +118,65 @@
         });
     });
 </script>
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        Highcharts.chart('ranking_eficiencia_chart', {
+            chart: {
+                type: 'column' // Alterado para 'column'
+            },
+            title: {
+                text: 'Ranking de Eficiência dos Gerentes'
+            },
+            xAxis: {
+                categories: [
+                    <c:forEach var="row" items="${leadsPorGerente.rows}">
+                        '${row.GERENTE}',
+                    </c:forEach>
+                ]
+            },
+            credits: {
+                enabled: false
+            },
+            plotOptions: {
+                column: {
+                    borderRadius: '25%' 
+                },
+                series: {
+                    dataLabels: {
+                        enabled: true,
+                        format: '{y:.1f}%' 
+                    }
+                }
+            },
+            series: [{
+                name: 'Eficiência',
+                data: [
+                    <c:forEach var="row" items="${leadsPorGerente.rows}">
+                        ${row.EFICIENCIA},
+                    </c:forEach>
+                ]
+            }]
+        });
+    });
+    </script>
 
 <script>
     function carregarLeadStatus(statusLead = 'AB') {
          const parametros = { 'STATUSLEAD': statusLead };
-        openLevel ('lvl_arj8z74', parametros);
+        openLevel('lvl_aykicqw', parametros);
     }
 
-    function carregarLeadDepartamento(departamentoLead = 'MA') {
-        const parametros = {'DEPARTAMENTO' : departamentoLead};
-        openLevel('lvl_arj8z74', parametros); //Trocar o nome do level
-    }
+
+    function carregarTodos() {
+        const parametros = {'STATUSLEAD' : 'AB'};
+        openLevel('lvl_aykicqw');
+   }
+   
+   function carregarLeadDepartamento(departamentoLead = 'MA') {
+       const parametros = {'DEPARTAMENTO' : departamentoLead};
+       openLevel('lvl_aykicqw', parametros); //Trocar o nome do level
+   }
+
 
 </script>
 
@@ -165,6 +224,8 @@ GROUP BY
 ORDER BY 
     Departamento
     </snk:query>
+
+    
 
     <snk:query var="leadSPorEmpresa">
         SELECT
@@ -219,7 +280,7 @@ ORDER BY
             <c:set var="firstRow" value="${totalLeadsPorPeriodo.rows[0]}" />
 
             <div class="row">
-                <div class="col-md-1">
+                <div class="col-md-1" onclick="carregarTodos()">
                     <div class="card text-bg-success mb-3 " style="max-width: 18rem;">
                         <div class="card-header text-center">Leads</div>
                         <div class="card-body">
@@ -317,7 +378,28 @@ ORDER BY
                 </div>
             </div>
             
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Ranking de Eficiência Gerente</div>
+                    <div class="card-body">
+                        <div id="ranking_eficiencia_chart"></div> 
+                    </div>
+                </div>
+            </div>
             
+        </div>
+
+        <div class="row mt-4">
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Leads por dia</div>
+                    <div class="card-body">
+                        <div id="chart_div"></div> 
+                    </div>
+                </div>
+            </div>
+
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">Leads por Empresa</div>
@@ -355,36 +437,6 @@ ORDER BY
                 </div>
             </div>
 
-            
-        </div>
-
-        <div class="row mt-4">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header">Leads por dia</div>
-                    <div class="card-body">
-                        <div id="chart_div"></div> 
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header">Cases Per Filling Date</div>
-                    <div class="card-body">
-                        <div id="cases-per-filling-date-chart"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header">Leads por Dia</div> 
-                    <div class="card-body">
-                        <div id="leads-per-day-chart"></div> 
-                    </div>
-                </div>
-            </div>
         </div>
 
     </div>
